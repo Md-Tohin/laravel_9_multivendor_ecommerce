@@ -137,10 +137,10 @@
                 </tr>
                 <tr>
                     <td>
-                        <h3 class="calc-h3 u-s-m-b-0">Total</h3>
+                        <h3 class="calc-h3 u-s-m-b-0">Grand Total</h3>
                     </td>
                     <td>
-                        <span class="calc-text">$220.00</span>
+                        <span class="calc-text">Tk. {{ $totalPrice }}</span>
                     </td>
                 </tr>
             </tbody>

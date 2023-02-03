@@ -11,7 +11,7 @@ class ProductsAttribute extends Model
 
     public static function getProductStock($product_id, $size){
         // $getProductStock = ProductsAttribute::where(['product_id'=>$product_id, 'size'=>$size])->pluck('stock');
-        $getProductStock = ProductsAttribute::select()->where(['product_id'=>$product_id, 'size'=>$size])->first();
+        $getProductStock = ProductsAttribute::select('stock')->where(['product_id'=>$product_id, 'size'=>$size])->first();
         return $getProductStock->stock;
     }
 }
