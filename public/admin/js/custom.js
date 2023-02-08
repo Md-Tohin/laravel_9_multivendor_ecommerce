@@ -7,6 +7,8 @@ $(document).ready(function(){
     $('#banners').DataTable();
     $('#filters').DataTable();
     $('#filtersValues').DataTable();
+    $('#coupons').DataTable();
+    $('#users').DataTable();
 
     //  Sidevbar Menu Active Inactive
     $(".nav-item").removeClass('active');
@@ -150,6 +152,34 @@ $(document).ready(function(){
         });
     });  
 
+     //  Update User Status
+     $(document).on("click",".updateUserStatus", function(){
+        // alert("ok");
+        var user_id = $(this).attr("user_id");
+        var status = $(this).children("i").attr("status");
+        // alert(user_id);
+        // alert(status);
+        $.ajax({
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:'post',
+            url:'/admin/update-user-status',
+            data:{user_id:user_id, status:status},
+            success:function(resp){
+                // alert(resp);
+                if (resp['status'] == 0) {
+                    $("#user-"+user_id).html("<i status='Inactive' style='font-size: 25px;' class='mdi mdi-bookmark-outline'></i>")
+                } else if(resp['status'] == 1) {
+                    $("#user-"+user_id).html("<i status='Active' style='font-size: 25px;' class='mdi mdi-bookmark-check'></i>")
+                }
+            },
+            error(){
+                alert('Error');
+            }
+        });
+    }); 
+
     //  Update Porduct Status
     // $(".updateProductStatus").click(function(){
     $(document).on("click",".updateProductStatus", function(){
@@ -200,6 +230,34 @@ $(document).ready(function(){
                     $("#banner-"+banner_id).html("<i status='Inactive' style='font-size: 25px;' class='mdi mdi-bookmark-outline'></i>")
                 } else if(resp['status'] == 1) {
                     $("#banner-"+banner_id).html("<i status='Active' style='font-size: 25px;' class='mdi mdi-bookmark-check'></i>")
+                }
+            },
+            error(){
+                alert('Error');
+            }
+        });
+    });  
+
+    //  Update Coupon Status
+    $(document).on("click",".updateCouponStatus", function(){
+        // alert('ok');
+        var coupon_id = $(this).attr("coupon_id");
+        var status = $(this).children("i").attr("status");
+        // alert(coupon_id);
+        // alert(status);
+        $.ajax({
+            headers:{
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            type:'post',
+            url:'/admin/update-coupon-status',
+            data:{coupon_id:coupon_id, status:status},
+            success:function(resp){
+                // alert(resp);
+                if (resp['status'] == 0) {
+                    $("#coupon-"+coupon_id).html("<i status='Inactive' style='font-size: 25px;' class='mdi mdi-bookmark-outline'></i>")
+                } else if(resp['status'] == 1) {
+                    $("#coupon-"+coupon_id).html("<i status='Active' style='font-size: 25px;' class='mdi mdi-bookmark-check'></i>")
                 }
             },
             error(){
@@ -421,5 +479,13 @@ $(document).ready(function(){
             }
         });
     });
+
+    $('#ManualCoupon').click(function(){
+        $('#coupon_field').show();
+    });
+    $('#AutomaticCoupon').click(function(){
+        $('#coupon_field').hide();
+    });
+   
 
 });

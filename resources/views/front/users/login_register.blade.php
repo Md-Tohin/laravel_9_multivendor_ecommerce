@@ -58,13 +58,15 @@
                 <div class="login-wrapper">
                     <h2 class="account-h2 u-s-m-b-20">Login</h2>
                     <h6 class="account-h6 u-s-m-b-30">Welcome back! Sign in to your account.</h6>
-                    <form action="{{ url('admin/login') }}" method="POST" id="loginForm">
+                    <div id="login-error"></div>
+                    <form action="javascript:;" method="POST" id="loginForm">
                         @csrf
                         <div class="u-s-m-b-30">
                             <label for="user-email">Email
                                 <span class="astk">*</span>
                             </label>
-                            <input type="text" name="email" id="user-email" class="text-field" placeholder="Email">                            
+                            <input type="email" name="email" id="user-email" class="text-field" placeholder="Email">
+                            <p id="login-email"></p>
                         </div>
                         <div class="u-s-m-b-30">
                             <label for="user-password">Password
@@ -72,8 +74,20 @@
                             </label>
                             <input type="password" name="password" id="user-password" class="text-field"
                                 placeholder="Password">
+                            <p id="login-password"></p>
                         </div>
-
+                        <div class="group-inline u-s-m-b-30">
+                            <div class="group-1">
+                                <input type="checkbox" class="check-box" id="remember-me-token">
+                                <label class="label-text" for="remember-me-token">Remember me</label>
+                            </div>
+                            <div class="group-2 text-right">
+                                <div class="page-anchor">
+                                    <a href="{{ url('user/forgot-password') }}">
+                                        <i class="fas fa-circle-o-notch u-s-m-r-9"></i>Lost your password?</a>
+                                </div>
+                            </div>
+                        </div>
                         <div class="m-b-45">
                             <button class="button button-outline-secondary w-100">Login</button>
                         </div>
@@ -87,7 +101,7 @@
                     <h2 class="account-h2 u-s-m-b-20">Register</h2>
                     <h6 class="account-h6 u-s-m-b-30">Registering for this site allows you to access your order status
                         and history.</h6>
-
+                    <div id="register-error"></div>
                     <form id="userRegistrationForm" action="javascript:;" method="POST">
                         @csrf
                         <div class="u-s-m-b-30">
@@ -96,7 +110,7 @@
                             </label>
                             <input type="text" name="name" id="user-name" class="text-field" value="{{ old('name') }}"
                                 placeholder="User Name">
-                                <p id="register-name"></p>
+                            <p id="register-name"></p>
                         </div>
                         <div class="u-s-m-b-30">
                             <label for="usermobile">Mobile
@@ -104,7 +118,7 @@
                             </label>
                             <input type="text" name="mobile" id="user-mobile" class="text-field"
                                 value="{{ old('mobile') }}" placeholder="User Mobile">
-                                <p id="register-mobile"></p>
+                            <p id="register-mobile"></p>
                         </div>
                         <div class="u-s-m-b-30">
                             <label for="useremail">Email
@@ -112,7 +126,7 @@
                             </label>
                             <input type="text" name="email" id="user-email" class="text-field"
                                 value="{{ old('email') }}" placeholder="User Email">
-                                <p id="register-email"></p>
+                            <p id="register-email"></p>
                         </div>
                         <div class="u-s-m-b-30">
                             <label for="userpassword">Password
@@ -120,7 +134,7 @@
                             </label>
                             <input type="password" name="password" id="user-password" class="text-field"
                                 placeholder="User Password">
-                                <p id="register-password"></p>
+                            <p id="register-password"></p>
                         </div>
                         <div class="u-s-m-b-30">
                             <input type="checkbox" name="accept" class="check-box" id="accept">

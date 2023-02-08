@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function () {  
 
     $("#getPrice").change(function () {
         var size = $(this).val();
@@ -69,10 +69,12 @@ $(document).ready(function () {
             type: 'POST',
             url: '/cart/update',
             success: function (resp) {
+                $('.totalCartItems').html(resp.totalCartItems);
                 if (resp.status == false) {
                     alert(resp.message);
                 }
-                $('#appendCartItems').html(resp.view)
+                $('#appendCartItems').html(resp.view);
+                $('#appendHeaderCartItems').html(resp.headerView);
             },
             error: function () {
                 alert('Error');
@@ -93,6 +95,8 @@ $(document).ready(function () {
                 type: 'POST',
                 url: '/cart/delete',
                 success: function (resp) {
+                    $('.totalCartItems').html(resp.totalCartItems);
+                    $('#appendHeaderCartItems').html(resp.headerView);
                     $('#appendCartItems').html(resp.view);
                 },
                 error: function () {
@@ -102,8 +106,97 @@ $(document).ready(function () {
         }
     });
 
+    //  Account Update Details  
+    $('#accountForm').submit(function(){
+        $(".loader").show();
+        var formdata = $(this).serialize();
+        $.ajax({
+            url: '/user/account',
+            type: 'POST',
+            data: formdata,
+            success: function(resp){
+                // alert(resp);
+                if (resp.type == 'error') {
+                    $(".loader").hide();
+                    $.each(resp.errors, function(i, error){
+                        $("#account-"+i).attr('style', 'color:red');
+                        $("#account-"+i).html(error);
+                        setTimeout(function(){
+                            $('#account-'+i).css({'display': 'none'});
+                        },[3000]);
+                    });
+                }
+                if (resp.type == 'success') {
+                    $(".loader").hide();
+                    $('#account-success').html(`
+                        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                            <strong>Success: </strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+            },
+            error: function () {
+                alert('Error');
+            }       
+        });
+    });
+
+    //  Account Password Update 
+    $('#passwordForm').submit(function(){
+        $(".loader").show();
+        var formdata = $(this).serialize();
+        $.ajax({
+            url: '/user/update-password',
+            type: 'POST',
+            data: formdata,
+            success: function(resp){
+                // alert(resp);
+                if (resp.type == 'error') {
+                    $(".loader").hide();
+                    $.each(resp.errors, function(i, error){
+                        $("#password-"+i).attr('style', 'color:red');
+                        $("#password-"+i).html(error);
+                        setTimeout(function(){
+                            $('#password-'+i).css({'display': 'none'});
+                        },[3000]);
+                    });
+                }
+                else if (resp.type == 'success') {
+                    $(".loader").hide();
+                    $('#password-success').html(`
+                        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                            <strong>Success: </strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+                else if (resp.type == 'incorrect') {
+                    $(".loader").hide();                   
+                    $('#password-error').html(`
+                        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                            <strong>Error: </strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);
+                }
+            },
+            error: function () {
+                $(".loader").hide();   
+                alert('Error');
+            }       
+        });
+    });
+
     //  Register Form Validation 
     $('#userRegistrationForm').submit(function(){
+        $(".loader").show();
         var formdata = $(this).serialize();
         $.ajax({
             url: '/user/register',
@@ -112,6 +205,7 @@ $(document).ready(function () {
             success: function(resp){
                 // alert(resp);
                 if (resp.type == 'error') {
+                    $(".loader").hide();
                     $.each(resp.errors, function(i, error){
                         $("#register-"+i).attr('style', 'color:red');
                         $("#register-"+i).html(error);
@@ -121,7 +215,15 @@ $(document).ready(function () {
                     });
                 }
                 if (resp.type == 'success') {
-                    window.location.href = resp.url;                    
+                    $(".loader").hide();
+                    $('#register-error').html(`
+                        <div class="alert alert-success alert-dismissible fade show mb-5" role="alert">
+                            <strong>Success: </strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);                   
                 }
             },
             error: function () {
@@ -130,8 +232,141 @@ $(document).ready(function () {
 
         });
     });
-        
 
+    //  Forgot Password Form Validation 
+    $('#forgotPasswordForm').submit(function(){
+        $(".loader").show();
+        var formdata = $(this).serialize();
+        $.ajax({
+            url: '/user/forgot-password',
+            type: 'POST',
+            data: formdata,
+            success: function(resp){
+                // alert(resp);
+                if (resp.type == 'error') {
+                    $(".loader").hide();
+                    $.each(resp.errors, function(i, error){
+                        $("#forgot-"+i).attr('style', 'color:red');
+                        $("#forgot-"+i).html(error);
+                        setTimeout(function(){
+                            $('#forgot-'+i).css({'display': 'none'});
+                        },[3000]);
+                    });
+                }
+                if (resp.type == 'success') {
+                    $(".loader").hide();
+                    $('#forgot-error').html(`
+                        <div class="alert alert-success alert-dismissible fade show mb-5" role="alert">
+                            <strong>Success: </strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);                   
+                }
+            },
+            error: function () {
+                alert('Error');
+            }       
+
+        });
+    });
+
+    //  Login Form  
+    $('#loginForm').submit(function(){
+        var formdata = $(this).serialize();
+        $.ajax({
+            url: '/user/login',
+            type: 'POST',
+            data: formdata,
+            success: function(resp){
+                if (resp.type == 'error') {
+                    $.each(resp.errors, function(i, error){
+                        $("#login-"+i).attr('style', 'color:red');
+                        $("#login-"+i).html(error);
+                        setTimeout(function(){
+                            $('#login-'+i).css({'display': 'none'});
+                        },[3000]);
+                    });
+                }
+                else if (resp.type == 'incorrect') {
+                    $('#login-error').html(`
+                        <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+                            <strong>Error:</strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);                   
+                } 
+                else if (resp.type == 'inactive') {
+                    $('#login-error').html(`
+                        <div class="alert alert-danger alert-dismissible fade show mb-5" role="alert">
+                            <strong>Error:</strong> ${resp.message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `);                   
+                } 
+                else if (resp.type == 'success') {
+                    window.location.href = resp.url;                    
+                } 
+            },
+            error: function () {
+                alert('Error');
+            }       
+
+        });
+    });
+
+    //  mini cart hide button
+    $(document).on("click","#mini-cart-close", function(){
+        $('.mini-cart-wrapper').removeClass('mini-cart-open');
+    });
+
+    //  Apply Coupon
+    $('#ApplyCoupon').submit(function(){
+        var user = $(this).attr('user');
+        // alert(user);
+        if(user){
+            var coupon = $('#code').val();
+            // if(!coupon){
+            //     $('#ApplyCouponError').text('Enter coupon apply!');
+            // }
+            $.ajax({
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                url: "/apply-coupon",
+                type: "POST",
+                data: {coupon:coupon},
+                success: function(resp){
+                    if(resp.message!=""){
+                        alert(resp.message);
+                    }
+                    $('.totalCartItems').html(resp.totalCartItems);                    
+                    $('#appendCartItems').html(resp.view);
+                    $('#appendHeaderCartItems').html(resp.headerView);
+                    if(resp.couponAmount > 0){
+                        $('.couponAmount').text("Tk. "+resp.couponAmount);
+                    }else{
+                        $('.couponAmount').text("Tk. 0");
+                    }
+                    if(resp.grandTotal > 0){
+                        $('.grandTotal').text("Tk. "+resp.grandTotal);
+                    }
+                },
+                error: function(){
+                    alert('Error');
+                }
+            });
+        }
+        else{
+            alert('Please login to apply coupon!');
+            return false;
+        }
+    });
 
 });
 

@@ -36,7 +36,7 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a @if (Session::get('page') == 'section' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'filters') style="background: #4B49AC !important; color: #fff !important;" @endif
+                <a @if (Session::get('page') == 'section' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'filters' || Session::get('page') == 'coupons') style="background: #4B49AC !important; color: #fff !important;" @endif
                     class="nav-link" data-toggle="collapse" href="#ui-catalogue" aria-expanded="false"
                     aria-controls="ui-catalogue">
                     <i class="icon-layout menu-icon"></i>
@@ -48,6 +48,10 @@
                         <li class="nav-item"> <a
                                 @if (Session::get('page') == 'products') style="background: #4B49AC !important; color: #fff !important;" @else style="background: #fff !important; color: #4B49AC" @endif
                                 class="nav-link" href="{{ url('admin/products') }}">Products</a>
+                        </li>
+                        <li class="nav-item"> <a
+                            @if (Session::get('page') == 'coupons') style="background: #4B49AC !important; color: #fff !important;" @else style="background: #fff !important; color: #4B49AC" @endif
+                            class="nav-link" href="{{ url('admin/coupons') }}">Coupons</a>
                         </li>
                     </ul>
                 </div>
@@ -103,21 +107,23 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="collapse" href="#ui-user" aria-expanded="false"
+                <a @if (Session::get('page') == 'users') style="background: #4B49AC !important; color: #fff !important;" @endif
+                    class="nav-link" data-toggle="collapse" href="#ui-user" aria-expanded="false"
                     aria-controls="ui-user">
                     <i class="icon-layout menu-icon"></i>
                     <span class="menu-title">User Management</span>
                     <i class="menu-arrow"></i>
                 </a>
                 <div class="collapse" id="ui-user">
-                    <ul class="nav flex-column sub-menu">
-                        <li class="nav-item"> <a class="nav-link" href="">Users</a></li>
-                        <li class="nav-item"> <a class="nav-link" href="">Subscribers</a></li>
+                    <ul class="nav flex-column sub-menu" style="background: #fff !important; color: #4B49AC !important">
+                        <li class="nav-item"> <a
+                                @if (Session::get('page') == 'users') style="background: #4B49AC !important; color:#fff !important" @else style="background: #fff !important; color: #4B49AC" @endif
+                                class="nav-link" href="{{ url('admin/users') }}">Users</a></li>
                     </ul>
                 </div>
             </li>
             <li class="nav-item">
-                <a @if (Session::get('page') == 'section' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'filters') style="background: #4B49AC !important; color: #fff !important;" @endif
+                <a @if (Session::get('page') == 'section' || Session::get('page') == 'categories' || Session::get('page') == 'products' || Session::get('page') == 'filters' || Session::get('page') == 'coupons') style="background: #4B49AC !important; color: #fff !important;" @endif
                     class="nav-link" data-toggle="collapse" href="#ui-catalogue" aria-expanded="false"
                     aria-controls="ui-catalogue">
                     <i class="icon-layout menu-icon"></i>
@@ -138,6 +144,10 @@
                         <li class="nav-item"> <a
                                 @if (Session::get('page') == 'products') style="background: #4B49AC !important; color: #fff !important;" @else style="background: #fff !important; color: #4B49AC" @endif
                                 class="nav-link" href="{{ url('admin/products') }}">Products</a>
+                        </li>
+                        <li class="nav-item"> <a
+                                @if (Session::get('page') == 'coupons') style="background: #4B49AC !important; color: #fff !important;" @else style="background: #fff !important; color: #4B49AC" @endif
+                                class="nav-link" href="{{ url('admin/coupons') }}">Coupons</a>
                         </li>
                         <li class="nav-item"> <a
                                 @if (Session::get('page') == 'filters') style="background: #4B49AC !important; color: #fff !important;" @else style="background: #fff !important; color: #4B49AC" @endif

@@ -106,6 +106,12 @@ Route::prefix('admin')->namespace('App\Http\Controllers\Admin')->group(function(
         //  Add Edit Banner 
         Route::match(['get','post'], 'add-edit-banner/{id?}', 'BannerController@addEditBanner');
 
+        //  Coupon Routes
+        Route::get('coupons', 'CouponController@coupons');
+        Route::post('update-coupon-status', 'CouponController@updateCouponStatus');
+        Route::get('delete-coupon/{id}', 'CouponController@deleteCoupon');
+        Route::match(['get', 'post'], 'add-edit-coupon/{id?}', 'CouponController@addEditCoupon');
+
         //  Attributes 
         Route::match(['get', 'post'], 'add-edit-attributes/{id?}', 'ProductController@addEditAttributes');
         Route::post('update-attribute-status', 'ProductController@updateAttributeStatus');
@@ -131,6 +137,10 @@ Route::prefix('admin')->namespace('App\Http\Controllers\Admin')->group(function(
 
         //  Admin Logout Route
         Route::get('logout', 'AdminController@logout');
+
+        //  Users Routes
+        Route::get('users', 'UserController@users');
+        Route::post('update-user-status', 'UserController@updateUserStatus');
     });   
 
 });
@@ -173,13 +183,34 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
     Route::post('cart/delete', 'ProductsController@cartDelete');
 
     //  User Login / Register
-    Route::get('user/login-register', 'UserController@loginRegister');
+    Route::get('user/login-register', 'UserController@loginRegister')->name('user.login-register');
+    // Route::get('user/login-register', ['as' => 'login', 'uses' => 'UserController@loginRegister']);
 
     //  User Register
     Route::post('user/register', 'UserController@userRegister');
 
+    //  User Login
+    Route::post('user/login', 'UserController@userLogin');
+
+    // User Forgot Password
+    Route::match(['get', 'post'], 'user/forgot-password', 'UserController@forgotPassword');
+
     //  User Logout
     Route::get('user/logout', 'UserController@userLogout');
+
+    //  Confirm User Account
+    Route::get('user/confirm/{code}', 'UserController@confirmAccount');
+
+    Route::group(['middleware' => ['auth']], function(){   
+        //  User Account 
+        Route::match(['get', 'post'], '/user/account', 'UserController@userAccount');
+
+        //  User Update Password 
+        Route::post('/user/update-password', 'UserController@updatePassword');
+
+        //  Apply Coupon
+        Route::post('apply-coupon', 'ProductsController@applyCoupon');
+    });
 
 });
 

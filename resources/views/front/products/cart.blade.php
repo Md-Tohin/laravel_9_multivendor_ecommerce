@@ -23,10 +23,29 @@
 <div class="page-cart u-s-p-t-80">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12">                
                 <div id="appendCartItems">
                     @include('front.products.cart_items')
                 </div>
+                <!-- Coupon -->
+                <div class="coupon-continue-checkout u-s-m-b-60">
+                    <div class="coupon-area">
+                        <h6>Enter your coupon code if you have one.</h6>
+                        <div class="coupon-field">
+                            <form action="javascript:void(0);" method="post" id="ApplyCoupon" @if (Auth::check()) user="1" @endif>
+                                <label class="sr-only" for="code">Apply Coupon</label>
+                                <input id="code" name="code" type="text" class="text-field" placeholder="Enter Coupon Code">
+                                {{-- <p><small id="ApplyCouponError"></small></p> --}}
+                                <button type="submit" class="button">Apply Coupon</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="button-area">
+                        <a href="shop-v1-root-category.html" class="continue">Continue Shopping</a>
+                        <a href="checkout.html" class="checkout">Proceed to Checkout</a>
+                    </div>
+                </div>
+                <!-- Coupon /- -->
             </div>
         </div>
     </div>

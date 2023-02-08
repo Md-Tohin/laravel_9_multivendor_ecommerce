@@ -82,22 +82,6 @@
     </table>
 </div>
 <!-- Products-List-Wrapper /- -->
-<!-- Coupon -->
-<div class="coupon-continue-checkout u-s-m-b-60">
-    <div class="coupon-area">
-        <h6>Enter your coupon code if you have one.</h6>
-        <div class="coupon-field">
-            <label class="sr-only" for="coupon-code">Apply Coupon</label>
-            <input id="coupon-code" type="text" class="text-field" placeholder="Coupon Code">
-            <button type="submit" class="button">Apply Coupon</button>
-        </div>
-    </div>
-    <div class="button-area">
-        <a href="shop-v1-root-category.html" class="continue">Continue Shopping</a>
-        <a href="checkout.html" class="checkout">Proceed to Checkout</a>
-    </div>
-</div>
-<!-- Coupon /- -->
 
 <!-- Billing -->
 <div class="calculation u-s-m-b-60">
@@ -122,7 +106,13 @@
                         <h3 class="calc-h3 u-s-m-b-0">Coupon Discount</h3>
                     </td>
                     <td>
-                        <span class="calc-text">Tk. 0.00</span>
+                        <span class="calc-text couponAmount">
+                            @if (Session::get('couponAmount'))
+                                Tk. {{ Session::get('couponAmount') }}
+                            @else
+                                Tk. 0
+                            @endif
+                        </span>
                     </td>
                 </tr>
 
@@ -132,7 +122,7 @@
                         <span> (estimated for your country)</span>
                     </td>
                     <td>
-                        <span class="calc-text">$0.00</span>
+                        <span class="calc-text">Tk. 0</span>
                     </td>
                 </tr>
                 <tr>
@@ -140,7 +130,13 @@
                         <h3 class="calc-h3 u-s-m-b-0">Grand Total</h3>
                     </td>
                     <td>
-                        <span class="calc-text">Tk. {{ $totalPrice }}</span>
+                        <span class="calc-text grandTotal">
+                            @if (Session::get('couponAmount'))
+                                Tk. {{ $totalPrice - Session::get('couponAmount') }}
+                            @else
+                                Tk. {{ $totalPrice }}
+                            @endif
+                        </span>
                     </td>
                 </tr>
             </tbody>

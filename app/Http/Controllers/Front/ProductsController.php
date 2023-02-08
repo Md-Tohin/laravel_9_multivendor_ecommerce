@@ -12,6 +12,8 @@ use App\Models\ProductsFilter;
 use App\Models\ProductsAttribute;
 use App\Models\Vendor;
 use App\Models\Cart;
+use App\Models\Coupon;
+use App\Models\User;
 use Session;
 use DB;
 use Auth;
@@ -73,13 +75,16 @@ class ProductsController extends Controller
                 }
 
                 //  checking for Price
+                $productIds = array();
                 if (isset($data['price']) && !empty($data['price'])) {
                     foreach ($data['price'] as $key => $price) {
-                        $priceArr = explode('-', $price);                        
-                        $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0],$priceArr[1]])->pluck('id')->toArray();   
+                        $priceArr = explode('-', $price);   
+                        if(isset($priceArr[0]) && isset($priceArr[1])){
+                            $productIds[] = Product::select('id')->whereBetween('product_price', [$priceArr[0],$priceArr[1]])->pluck('id')->toArray();   
+                        }   
                     }
                     // echo "<pre>"; print_r($productIds); die;
-                    $productIds = call_user_func_array('array_merge', $productIds);
+                    $productIds = array_unique(array_flatten($productIds));
                     $categoryProducts->whereIn('products.id', $productIds);
                     // echo "<pre>"; print_r($data); die;
                     // echo "<pre>"; print_r($productIds); die;
@@ -225,19 +230,18 @@ class ProductsController extends Controller
                 //  User is logged in
                 $user_id = Auth::user()->id;
                 $countProducts = Cart::where(['product_id'=>$data['product_id'], 'size'=>$data['size'], 'user_id' => $user_id])->count();
-                if ($isExistsCartProduct > 0) {
-                    return redirect()->back()->with('error_message', 'This product is already exists in Cart!  ');
-                }
+                // if ($isExistsCartProduct > 0) {
+                //     return redirect()->back()->with('error_message', 'This product is already exists in Cart!  ');
+                // }
             }
             else{
                 $user_id = 0;
                 $countProducts = Cart::where(['product_id'=>$data['product_id'], 'size'=>$data['size'], 'session_id' => $session_id])->count();
-                // echo '<pre>'; print_r($countProducts) ; die;
-                if ($countProducts > 0) {
-                    return redirect()->back()->with('error_message', 'This product is already exists in Cart!  ');
-                }
+                // echo '<pre>'; print_r($countProducts) ; die;                
             }            
-
+            if ($countProducts > 0) {
+                return redirect()->back()->with('error_message', 'This product is already exists in Cart!  ');
+            }
             //  Save Cart 
             $item = new Cart;
             $item->session_id = $session_id;
@@ -246,7 +250,8 @@ class ProductsController extends Controller
             $item->size = $data['size'];
             $item->quantity = $data['quantity'];
             $item->save();
-
+            Session::forget('couponAmount');
+            Session::forget('couponCode');
             return redirect()->back()->with('success_message', 'Product has been added in Cart!  ');
 
         }
@@ -280,9 +285,10 @@ class ProductsController extends Controller
                 //  Get Cart Items 
                 $getCartItems = Cart::getCartItems();
                 return response()->json([
-                    'status' => false,
+                    'status' => false,                   
                     'message' => 'Product Stock is not Available',
                     'view' => (String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                    'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
                 ]);
             }
 
@@ -296,6 +302,7 @@ class ProductsController extends Controller
                     'status' => false,
                     'message' => 'Product Size is not Available. Please remove this Product and choose another one!',
                     'view' => (String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                    'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
                 ]);
             }
 
@@ -304,9 +311,14 @@ class ProductsController extends Controller
             // echo '<pre>'; print_r($availableStock) ; die;
             //  Get Cart Items 
             $getCartItems = Cart::getCartItems();
+            $totalCartItems = totalCartItems();
+            Session::forget('couponAmount');
+            Session::forget('couponCode');
             return response()->json([
                 'status'=> true, 
-                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems'))
+                'totalCartItems' => $totalCartItems,
+                'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
             ]);
         }
     }
@@ -314,14 +326,133 @@ class ProductsController extends Controller
     //  Cart Delete
     public function cartDelete(Request $request){
         if ($request->ajax()) {
+            Session::forget('couponAmount');
+            Session::forget('couponCode');
             $data = $request->all();
             // echo '<pre>'; print_r($data) ; die;
             Cart::where('id', $data['cartid'])->delete();
             $getCartItems = Cart::getCartItems();
+            $totalCartItems = totalCartItems();
             return response()->json([
+                'totalCartItems' => $totalCartItems,
                 'view' => (String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
             ]);
         }
+    }
+
+    //  Apply Coupon
+    public function applyCoupon(Request $request){
+        if($request->ajax()){
+            $data = $request->all();
+            // dd($data);
+            Session::forget('couponAmount');
+            Session::forget('couponCode');
+            $getCartItems = Cart::getCartItems();
+            $totalCartItems = totalCartItems();
+            $couponCount = Coupon::where('coupon_code', $data['coupon'])->count();            
+            if($couponCount == 0){               
+                return response()->json([
+                    'status'=> false, 
+                    'message'=> 'The coupon is not valid', 
+                    'totalCartItems' => $totalCartItems,
+                    'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                    'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                ]);
+            }else{
+                // echo "Check for other coupon conditions";
+
+                //  get coupon details
+                $couponDetails = Coupon::where('coupon_code', $data['coupon'])->first();
+                //  check if coupon is active
+                if($couponDetails->status == 0){
+                    $message = "The coupon is not active!";
+                }    
+                //  check if coupon is expired
+                $expiry_date = $couponDetails->expiry_date;
+                $current_date = date('Y-m-d');
+                if($expiry_date < $current_date){
+                    $message = "The coupon is expired!";
+                }
+                //  check if coupon is from selected categories
+                $catArr = explode(',', $couponDetails->categories);
+                //  check all selected categories from coupon and convert to array
+                $total_amount = 0;
+                foreach($getCartItems as $key => $item){
+                    if(!in_array($item['product']['category_id'], $catArr)){
+                        $message = "The coupon code is not for one of the selected products.";
+                    }
+                    $attrPrice = Product::getDiscountAttributePrice($item['product_id'], $item['size']);
+                    
+                    $total_amount = $total_amount + ($attrPrice['final_price'] * $item['quantity']);
+                    // echo "<pre>"; print_r($attrPrice); die;                    
+                }
+
+                //  check if coupon is from selected users
+                if(isset($couponDetails->users) && !empty($couponDetails->users)){
+                    $userArr = explode(',', $couponDetails->users);
+                    //  get user id's of all selected users
+                    if(count($userArr)){
+                        foreach($userArr as $user){
+                            $getUserId = User::select('id')->where('email', $user)->first()->toArray();
+                            $usersId[] = $getUserId['id'];
+                        }
+                        //  check if any cart item not belong to coupon user
+                        foreach($getCartItems as $key => $item){
+                            if(!in_array($item['user_id'], $usersId)){
+                                $message = "This coupon code is not for you. Try with valid coupon code!";
+                            }                        
+                        }
+                    }                    
+                }
+
+                //  check if coupon belongs to vendor products
+                if($couponDetails['vendor_id'] > 0){
+                    $productIds = Product::select('id')->where('vendor_id', $couponDetails['vendor_id'])->pluck('id')->toArray();
+                    // echo "<pre>"; print_r($getCartItems); die();
+                    foreach($getCartItems as $item){
+                        if(!in_array($item['product']['id'], $productIds)){
+                            $message = "This coupon code is not for you. Try with valid coupon code!";
+                        }
+                    }
+                }
+
+                //  if error message is there
+                if(isset($message)){
+                    return response()->json([
+                        'status'=> false, 
+                        'message'=> $message, 
+                        'totalCartItems' => $totalCartItems,
+                        'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                        'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                    ]);
+                }
+                else{
+                    //  coupon code is correct
+                    //  check if coupon amount type is fixed or percentage
+                    if($couponDetails->amount_type == "Fixed"){
+                        $couponAmount = $couponDetails->amount;
+                    }else{
+                        $couponAmount = $total_amount * ($couponDetails->amount/100);
+                    }
+                    //  Add Coupon code & Amount in session variables
+                    $grandTotal = $total_amount - $couponAmount;
+                    $message = "Coupon Code successfully applied. You are availing discount!";
+                    Session::put('couponAmount', $couponAmount);
+                    Session::put('couponCode', $data['coupon']);
+                    return response()->json([
+                        'status'=> true, 
+                        'message'=> $message, 
+                        'couponAmount' => $couponAmount,
+                        'grandTotal' => $grandTotal,
+                        'totalCartItems' => $totalCartItems,
+                        'view'=>(String)View::make('front.products.cart_items')->with(compact('getCartItems')),
+                        'headerView'=>(String)View::make('front.layout.header_cart_items')->with(compact('getCartItems'))
+                    ]);
+                }
+            }
+        }
+        
     }
 
 }
