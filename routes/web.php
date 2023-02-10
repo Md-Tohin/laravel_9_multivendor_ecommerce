@@ -210,6 +210,25 @@ Route::namespace('App\Http\Controllers\Front')->group(function () {
 
         //  Apply Coupon
         Route::post('apply-coupon', 'ProductsController@applyCoupon');
+
+        //  Checkout
+        Route::match(['get', 'post'], '/checkout', 'ProductsController@checkout');
+
+        //  Get Delivery Address
+        Route::post('/get-delivery-address', 'AddressController@getDeliveryAddress');
+
+        //  Save Delivery Address
+        Route::post('/save-delivery-address', 'AddressController@saveDeliveryAddress');
+
+        //  Delete Delivery Address
+        Route::post('/delete-delivery-address', 'AddressController@deleteDeliveryAddress');
+
+        //  Thanks
+        Route::get('/thanks', 'ProductsController@thanks');
+
+        //  Orders
+        Route::get('user/orders/{id?}', 'OrderController@orders');
+
     });
 
 });

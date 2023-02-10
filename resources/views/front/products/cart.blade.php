@@ -5,7 +5,7 @@
 <div class="page-style-a">
     <div class="container">
         <div class="page-intro">
-            <h2>Cart</h2>
+            <h2>My Cart</h2>
             <ul class="bread-crumb">
                 <li class="has-separator">
                     <i class="ion ion-md-home"></i>
@@ -22,6 +22,22 @@
 <!-- Cart-Page -->
 <div class="page-cart u-s-p-t-80">
     <div class="container">
+        @if (Session::has('error_message'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error:</strong> {{ Session::get('error_message') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+        @if (Session::has('success_message'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Success:</strong> {{ Session::get('success_message') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
         <div class="row">
             <div class="col-lg-12">                
                 <div id="appendCartItems">
@@ -41,8 +57,8 @@
                         </div>
                     </div>
                     <div class="button-area">
-                        <a href="shop-v1-root-category.html" class="continue">Continue Shopping</a>
-                        <a href="checkout.html" class="checkout">Proceed to Checkout</a>
+                        <a href="{{ url('/') }}" class="continue">Continue Shopping</a>
+                        <a href="{{ url('checkout') }}" class="checkout">Proceed to Checkout</a>
                     </div>
                 </div>
                 <!-- Coupon /- -->

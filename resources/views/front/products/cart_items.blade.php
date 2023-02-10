@@ -115,8 +115,7 @@
                         </span>
                     </td>
                 </tr>
-
-                <tr>
+                {{-- <tr>
                     <td>
                         <h3 class="calc-h3 u-s-m-b-0" id="tax-heading">Tax</h3>
                         <span> (estimated for your country)</span>
@@ -124,7 +123,7 @@
                     <td>
                         <span class="calc-text">Tk. 0</span>
                     </td>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td>
                         <h3 class="calc-h3 u-s-m-b-0">Grand Total</h3>
