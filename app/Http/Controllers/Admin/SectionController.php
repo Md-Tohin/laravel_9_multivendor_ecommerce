@@ -13,7 +13,7 @@ class SectionController extends Controller
     //  View Sections
     public function sections(){
         Session::put('page', 'section');
-        $sections = Section::get()->toArray();
+        $sections = Section::orderBy('id', 'desc')->get()->toArray();
         // echo "<pre>"; print_r($sections);
         // exit();
         return view('admin.sections.sections')->with(compact('sections'));

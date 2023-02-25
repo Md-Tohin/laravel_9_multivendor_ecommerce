@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use DB;
-use Auth;
+
 use Session;
 use App\Models\Cart;
 use App\Models\User;
@@ -19,6 +19,8 @@ use App\Models\ProductsFilter;
 use App\Models\DeliveryAddress;
 use App\Models\ProductsAttribute;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Route;
 
@@ -378,6 +380,14 @@ class ProductsController extends Controller
                 if($expiry_date < $current_date){
                     $message = "The coupon is expired!";
                 }
+                //  Check if coupon is for single time
+                if ($couponDetails->coupon_type == 'Single Time') {
+                    //  Check in orders table if coupon already availed by th user
+                    $couponCount = Order::where(['coupon_code' => $data['coupon'], 'user_id' => Auth::user()->id])->count();;
+                    if ($couponCount >= 1) {
+                        $message = "This coupon code is already availed by you!";
+                    }
+                }
                 //  check if coupon is from selected categories
                 $catArr = explode(',', $couponDetails->categories);
                 //  check all selected categories from coupon and convert to array
@@ -469,7 +479,8 @@ class ProductsController extends Controller
             return redirect('cart')->with('error_message', 'Shopping cart is empty! Please add products to checkout first!');
         }
         if($request->isMethod('post')){
-            $data = $request->all();          
+            $data = $request->all();      
+            // dd($data);    
             // Delivery Address validation
             if(empty($data['address_id'])){
                 $message = "Please Select Delivery Address";
@@ -547,6 +558,23 @@ class ProductsController extends Controller
             }
             Session::put('order_id', $order_id);
             DB::commit();
+            //  Send order email and sms
+            $orderDetails = Order::with('orders_products')->where('id', $order_id)->first()->toArray();
+            if ($orderDetails['payment_gateway'] == 'COD') {
+                $email = Auth::user()->email;
+                $messageData = [
+                    'email' => $email,
+                    'name' => Auth::user()->name,
+                    'order_id' => $order_id,
+                    'orderDetails' => $orderDetails,
+                ];
+                Mail::send('emails.order', $messageData, function($message)use($email){
+                    $message->to($email)->subject('Order Placed - ShopMama E-commerce');
+                });
+            } else {
+                echo "Prepaid payment methods coming soon";
+            }
+            
             return redirect('thanks');
         }        
         return view('front.products.checkout')->with(compact('deliveryAddresses', 'countries', 'getCartItems'));

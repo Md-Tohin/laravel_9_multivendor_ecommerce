@@ -418,6 +418,7 @@ $(document).ready(function () {
                 }else{
                     $(".loader").hide();
                     $('#deliveryAddresses').html(resp.view);
+                    window.location.href = "checkout";
                 }
             },
             error: function(error){
@@ -439,6 +440,7 @@ $(document).ready(function () {
                 data: {addressid:addressid},
                 success: function(resp){
                     $('#deliveryAddresses').html(resp.view);
+                    window.location.href = "checkout";
                 },
                 error: function(error){
                     alert('Error');
@@ -446,6 +448,11 @@ $(document).ready(function () {
             });
         }
     });
+
+    //  Show loader at the time of order placement
+    $(document).on('click', '#placeOrder', function(){
+        $(".loader").show();
+    })
 
 });
 

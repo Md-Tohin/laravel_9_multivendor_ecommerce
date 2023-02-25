@@ -12,9 +12,9 @@ use Carbon;
 class BrandController extends Controller
 {
     //  View
-    public function brandns(){
+    public function brands(){
         Session::put('page', 'brands');
-        $brands = Brand::get()->toArray();
+        $brands = Brand::orderBy('id', 'desc')->get()->toArray();
         // echo "<pre>"; print_r($brands);
         return view('admin.brands.brands')->with(compact('brands'));
     }

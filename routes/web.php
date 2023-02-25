@@ -56,7 +56,7 @@ Route::prefix('admin')->namespace('App\Http\Controllers\Admin')->group(function(
 
         //  ============================  Brand Route ==================================
         //  View Brands
-        Route::get('brands', 'BrandController@brandns');
+        Route::get('brands', 'BrandController@brands');
         //  Update Brand Status By Ajax
         Route::post('update-brand-status', 'BrandController@updateBrandStatus');
         //  Delete Brand
@@ -141,9 +141,20 @@ Route::prefix('admin')->namespace('App\Http\Controllers\Admin')->group(function(
         //  Users Routes
         Route::get('users', 'UserController@users');
         Route::post('update-user-status', 'UserController@updateUserStatus');
+
+        //  Orders Routes
+        Route::get('orders', 'OrderController@orders');
+        Route::get('orders/{id}', 'OrderController@orderDetails');
+        Route::post('update-order-status', 'OrderController@updateOrderStatus');
+        Route::post('update-order-item-status', 'OrderController@updateOrderItemStatus');
+        //  Order Invoices Routes
+        Route::get('orders/invoice/{id}', 'OrderController@viewOrderInvoice');
+        Route::get('orders/invoice/pdf/{id}', 'OrderController@viewPDFInvoice');
     });   
 
 });
+
+Route::get('orders/invoice/download/{id}', 'App\Http\Controllers\Admin\OrderController@viewPDFInvoice');
 
 //  Front Route
 Route::namespace('App\Http\Controllers\Front')->group(function () {

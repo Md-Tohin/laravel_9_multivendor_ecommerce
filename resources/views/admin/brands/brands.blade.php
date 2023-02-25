@@ -34,38 +34,38 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($brands as $key => $value)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            <td>{{ $value['name'] }}</td>
-                                            <td>
-                                                @if ($value['status'] == 1)
-                                                    <a class="updateBrandstatus" id="brand-{{ $value['id'] }}"
-                                                        href="javascript:void(0)" brand_id="{{ $value['id'] }}">
-                                                        <i status="Active" style="font-size: 25px;"
-                                                            class="mdi mdi-bookmark-check"></i>
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $value['name'] }}</td>
+                                                <td>
+                                                    @if ($value['status'] == 1)
+                                                        <a class="updateBrandstatus" id="brand-{{ $value['id'] }}"
+                                                            href="javascript:void(0)" brand_id="{{ $value['id'] }}">
+                                                            <i status="Active" style="font-size: 25px;"
+                                                                class="mdi mdi-bookmark-check"></i>
+                                                        </a>
+                                                    @else
+                                                        <a class="updateBrandstatus" id="brand-{{ $value['id'] }}"
+                                                            href="javascript:void(0)" brand_id="{{ $value['id'] }}">
+                                                            <i status="Inactive" style="font-size: 25px;"
+                                                                class="mdi mdi-bookmark-outline"></i>
+                                                        </a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="{{ url('admin/add-edit-brand/'.$value['id']) }}" class="">
+                                                        <i style="font-size: 25px;" class="mdi mdi-pencil-box"></i>
                                                     </a>
-                                                @else
-                                                    <a class="updateBrandstatus" id="brand-{{ $value['id'] }}"
-                                                        href="javascript:void(0)" brand_id="{{ $value['id'] }}">
-                                                        <i status="Inactive" style="font-size: 25px;"
-                                                            class="mdi mdi-bookmark-outline"></i>
-                                                    </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{ url('admin/add-edit-brand/'.$value['id']) }}" class="">
-                                                    <i style="font-size: 25px;" class="mdi mdi-pencil-box"></i>
-                                                </a>
 
-                                                {{-- <a href="{{ url("admin/delete-brand/". $value['id']) }}" class="confirmDelete" title="brand">
-                                                    <i style="font-size: 25px;" class="mdi mdi-file-excel-box"></i>
-                                                </a> --}}
-                                                <a href="javascript:void(0)" class="confirmDelete" module="brand" moduleId="{{ $value['id'] }}">
-                                                    <i style="font-size: 25px;" class="mdi mdi-file-excel-box"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                    {{-- <a href="{{ url("admin/delete-brand/". $value['id']) }}" class="confirmDelete" title="brand">
+                                                        <i style="font-size: 25px;" class="mdi mdi-file-excel-box"></i>
+                                                    </a> --}}
+                                                    <a href="javascript:void(0)" class="confirmDelete" module="brand" moduleId="{{ $value['id'] }}">
+                                                        <i style="font-size: 25px;" class="mdi mdi-file-excel-box"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>                               
                             </div>

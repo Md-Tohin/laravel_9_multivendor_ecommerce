@@ -29,7 +29,7 @@ class ProductController extends Controller
             }
         } 
         
-        $products = Product::with(['section'=>function($query){
+        $products = Product::orderBy('id','desc')->with(['section'=>function($query){
             $query->select('id','name');
         },'category'=>function($query){
             $query->select('id','category_name');

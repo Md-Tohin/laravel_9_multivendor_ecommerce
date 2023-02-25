@@ -14,7 +14,7 @@ class CategoryController extends Controller
     // View Categories
     public function categories(){
         Session::put('page','categories');
-        $categories = Category::with('section','parentCategory')->get()->toArray();
+        $categories = Category::with('section','parentCategory')->orderBy('id', 'desc')->get()->toArray();
         // echo "<pre>"; print_r($categories);
         // exit();
         return view('admin.categories.categories')->with(compact('categories'));

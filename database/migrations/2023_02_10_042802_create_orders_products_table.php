@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('product_size');
             $table->float('product_price');
             $table->integer('product_qty');
+            $table->string('courier_name')->nullable();
+            $table->string('tracking_number')->nullable();
             $table->timestamps();
         });
     }

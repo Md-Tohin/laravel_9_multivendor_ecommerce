@@ -9,6 +9,7 @@ $(document).ready(function(){
     $('#filtersValues').DataTable();
     $('#coupons').DataTable();
     $('#users').DataTable();
+    $('#orders').DataTable();
 
     //  Sidevbar Menu Active Inactive
     $(".nav-item").removeClass('active');
@@ -486,6 +487,18 @@ $(document).ready(function(){
     $('#AutomaticCoupon').click(function(){
         $('#coupon_field').hide();
     });
-   
+
+    //  Show Courier Name and Tracking Number in case of Shopped Order Status 
+    $('#courier_name').hide();
+    $('#tracking_number').hide();
+    $(document).on('change', '#order_status', function(e){
+        if (this.value == 'Shipped') {
+            $('#courier_name').show();
+            $('#tracking_number').show();
+        } else {
+            $('#courier_name').hide();
+            $('#tracking_number').hide();
+        }
+    });
 
 });

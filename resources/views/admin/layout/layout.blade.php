@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ url('admin/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" href="{{ url('admin/vendors/css/vendor.bundle.base.css') }}">
     <!-- endinject -->
+    <link rel="stylesheet" href="{{ url('admin/vendors/select2/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url('admin/vendors/select2-bootstrap-theme/select2-bootstrap.min.css') }}">
     <!-- icon link -->
     <link rel="stylesheet" href="{{ url('admin/vendors/mdi/css/materialdesignicons.min.css') }}">
     <!-- Plugin css for this page -->
@@ -66,6 +68,7 @@
     <script src="{{ url('admin/js/settings.js') }}"></script>
     <script src="{{ url('admin/js/todolist.js') }}"></script>
     <!-- endinject -->
+    <script src="{{ url('admin/js/select2.js') }}"></script>
     <!-- Custom js for this page-->
     <script src="{{ url('admin/js/dashboard.js') }}"></script>
     <script src="{{ url('admin/js/Chart.roundedBarCharts.js') }}"></script>
